@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Grid</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-content">
+        <div class="container">
+            <h1 id="grid-title"></h1>
+            
+            <div class="controls">
+                <input type="number" id="grid-size-input" min="4" max="8" value="5">
+                <button id="generate-btn">Generate</button>
+                <button id="solve-btn">Solve</button>
+            </div>
+            
+            <div class="grid-container" id="grid-container"></div>
+        </div>
+        
+        <div class="textbox-container">
+            <h2>Word List</h2>
+            <textarea id="words-textbox" readonly placeholder="Words will appear here..."></textarea>
+            <p class="textbox-instructions">Words found will be displayed here</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
