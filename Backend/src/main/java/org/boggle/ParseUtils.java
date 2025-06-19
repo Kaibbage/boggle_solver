@@ -13,7 +13,7 @@ public class ParseUtils {
         for(String charString: charsAsString){
             int r = index/n;
             int c = index%n;
-            grid[r][c] = charString.charAt(0);
+            grid[r][c] = charString.toLowerCase().charAt(0);
             index++;
         }
 

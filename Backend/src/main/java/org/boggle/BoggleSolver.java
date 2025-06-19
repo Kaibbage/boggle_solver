@@ -11,6 +11,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
+import static org.boggle.Constants.MIN_WORD_SIZE;
+import static org.boggle.Constants.directions;
+
 public class BoggleSolver {
     public TrieNode head;
     //public HashSet<String> foundBefore; this should be local, not an attribute
@@ -65,9 +68,45 @@ public class BoggleSolver {
         curr.end = true;
     }
 
-    public List<String> getAllBoggleWords(char[][] grid){
+    public List<String> getAllBoggleWords(char[][] grid, int n){
         List<String> boggleWords = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        boolean[][] seen = new boolean[n][n];
+        HashSet<String> usedWords = new HashSet<>();
 
+        for(int r = 0; r < n; r++){
+            for(int c = 0; c < n; c++){
+                dfs(grid, head, sb, boggleWords, seen, usedWords, r, c, n);
+            }
+        }
         return boggleWords;
+    }
+
+    public void dfs(char[][] grid, TrieNode curr, StringBuilder sb, List<String> boggleWords, boolean[][] seen, HashSet<String> usedWords, int r, int c, int n){
+        if(seen[r][c] || curr.children[grid[r][c] - 'a'] == null){
+            return;
+        }
+
+        seen[r][c] = true;
+        sb.append(grid[r][c]);
+        curr = curr.children[grid[r][c] - 'a'];
+
+        String wordString = sb.toString();
+        if(curr.end && sb.length() >= MIN_WORD_SIZE && !usedWords.contains(wordString)){
+            boggleWords.add(wordString);
+            usedWords.add(wordString);
+        }
+
+        for(int[] direction: directions){
+            int nr = r + direction[0];
+            int nc = c + direction[1];
+
+            if(nr >= 0 && nr < n && nc >= 0 && nc < n){
+                dfs(grid, curr, sb, boggleWords, seen, nr, nc, n);
+            }
+        }
+
+        sb.deleteCharAt(sb.length()-1);
+        seen[r][c] = false;
     }
 }

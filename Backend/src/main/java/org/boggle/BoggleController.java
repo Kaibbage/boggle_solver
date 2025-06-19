@@ -4,6 +4,7 @@ import org.boggle.BoggleApplication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.boggle.ParseUtils.getGridFromString;
 
@@ -42,7 +43,11 @@ public class BoggleController {
     public String startSolvingDijkstra(@RequestBody InputRequest request) {
         String input = request.getInput();
 
-        System.out.println(Arrays.deepToString(getGridFromString(input)));
+        char[][] grid = getGridFromString(input);
+
+        List<String> allBoggleWords = boggleSolver.getAllBoggleWords(grid, grid.length);
+
+        System.out.println(allBoggleWords);
 
         return "";
     }
