@@ -49,11 +49,25 @@ public class BoggleSolver {
 
     public void buildTrie(List<String> allWords){
         for(String word: allWords){
-            addWordToTrie();
+            addWordToTrie(word);
         }
     }
 
-    public void addWordToTrie(){
+    public void addWordToTrie(String word){
+        TrieNode curr = head;
+        for(char c: word.toCharArray()){
+            int index = c - 'a';
+            if(curr.children[index] == null){
+                curr.children[index] = new TrieNode();
+            }
+            curr = curr.children[index];
+        }
+        curr.end = true;
+    }
 
+    public List<String> getAllBoggleWords(char[][] grid){
+        List<String> boggleWords = new ArrayList<>();
+
+        return boggleWords;
     }
 }

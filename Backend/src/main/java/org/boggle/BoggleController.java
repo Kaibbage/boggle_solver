@@ -3,6 +3,10 @@ package org.boggle;
 import org.boggle.BoggleApplication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+
+import static org.boggle.ParseUtils.getGridFromString;
+
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:8081")  // Adjust the URL to your frontend's URL if necessary
 public class BoggleController {
@@ -38,7 +42,7 @@ public class BoggleController {
     public String startSolvingDijkstra(@RequestBody InputRequest request) {
         String input = request.getInput();
 
-
+        System.out.println(Arrays.deepToString(getGridFromString(input)));
 
         return "";
     }

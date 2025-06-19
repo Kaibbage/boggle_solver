@@ -1,3 +1,4 @@
+const apiBaseUrl = "http://localhost:8080";
 let gridSize = 5;
 
 
@@ -106,12 +107,18 @@ function checkSizeAndGenerateGrid(){
     }
 }
 
+//strings are immutable in js, we can maybe improve performance by creating an arraylist [] and adding (with push) and then using join at the end, just have to consider last string
+//how to remove last space, time complexity of this is O(n^2) T_T
 function getGridString(){
     let sentString = gridSize + "::";
     for (let row = 0; row < gridSize; row++) {
         for (let col = 0; col < gridSize; col++) {
             let cell = document.getElementById(`cell-${row}-${col}`);
             let currentChar = cell.value;
+
+            if(!currentChar){
+                sentString += "fail";
+            }
 
             sentString += currentChar + " ";
         }
@@ -122,7 +129,13 @@ function getGridString(){
 
 function startSolving(){
     let sentString = getGridString();
-    sendToBackend(sentString);
+    if(sentString.includes("fail")){
+        alert("The boggle grid is not filled :(");
+    }
+    else{
+        sendToBackend(sentString);
+    }
+    
 }
 
 async function sendToBackend(dataAsString) {
