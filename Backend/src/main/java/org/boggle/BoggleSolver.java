@@ -102,7 +102,7 @@ public class BoggleSolver {
             int nc = c + direction[1];
 
             if(nr >= 0 && nr < n && nc >= 0 && nc < n){
-                dfs(grid, curr, sb, boggleWords, seen, nr, nc, n);
+                dfs(grid, curr, sb, boggleWords, seen, usedWords, nr, nc, n);
             }
         }
 
