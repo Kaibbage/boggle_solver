@@ -1,4 +1,4 @@
-package org.Boggle;
+package org.boggle;
 
 import org.boggle.BoggleApplication;
 import org.springframework.web.bind.annotation.*;
@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:8081")  // Adjust the URL to your frontend's URL if necessary
 public class BoggleController {
+
+    public BoggleSolver boggleSolver;
 
 //    private GraphExploreWebSocketHandler webSocketHandler;
 
@@ -16,7 +18,7 @@ public class BoggleController {
 //    }
 
     public BoggleController(){
-
+        boggleSolver = new BoggleSolver();
     }
 
     public static class InputRequest {
@@ -29,6 +31,16 @@ public class BoggleController {
         public void setInput(String input) {
             this.input = input;
         }
+    }
+
+
+    @PostMapping("/solve-boggle-all-at-once")
+    public String startSolvingDijkstra(@RequestBody InputRequest request) {
+        String input = request.getInput();
+
+
+
+        return "";
     }
 
 

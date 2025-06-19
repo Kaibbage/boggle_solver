@@ -54,7 +54,7 @@ function addCellFunctions(cell, row, col){
                     nextCell = document.getElementById(`cell-${row}-${col+1}`);
                 } else if (row < gridSize - 1) {
                     nextCell = document.getElementById(`cell-${row+1}-0`);
-             }
+                } 
                                 
                 if (nextCell) {
                     nextCell.focus();
@@ -90,11 +90,7 @@ function generateGrid() {
     const gridTitle = document.getElementById('grid-title');
     gridTitle.textContent = `${gridSize}x${gridSize} boggle grid`; 
 }
-        
-
-        
-
-        
+         
 
 
 function checkSizeAndGenerateGrid(){
@@ -110,15 +106,54 @@ function checkSizeAndGenerateGrid(){
     }
 }
 
+function getGridString(){
+    let sentString = gridSize + "::";
+    for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+            let cell = document.getElementById(`cell-${row}-${col}`);
+            let currentChar = cell.value;
+
+            sentString += currentChar + " ";
+        }
+    }
+    sentString = sentString.slice(0, sentString.length - 1);
+    return sentString;
+}
+
+function startSolving(){
+    let sentString = getGridString();
+    sendToBackend(sentString);
+}
+
+async function sendToBackend(dataAsString) {
+    const data = { input: dataAsString };
+
+    try {
+        const response = await fetch(`${apiBaseUrl}/solve-boggle-all-at-once`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data), //sendinginfo
+        });
+
+        const result = await response.text(); // Extract result
+        console.log(result);
+        return result; //return result, unnecessary here but we keep for fun
+
+    } catch (error) {
+        console.error("Error:", error);
+        throw error; //throw error if needed
+    }
+}
+
 function initialize(){
     const generateBtn = document.getElementById('generate-btn');
     const solveBtn = document.getElementById('solve-btn');
 
     generateBtn.addEventListener('click', checkSizeAndGenerateGrid);
 
-    solveBtn.addEventListener('click', () => {
-
-    }); //nothing yet lmao
+    solveBtn.addEventListener('click', startSolving); //nothing yet lmao
 
 
     generateGrid();
