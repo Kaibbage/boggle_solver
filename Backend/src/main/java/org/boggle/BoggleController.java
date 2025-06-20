@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.boggle.ParseUtils.getGridFromString;
+import static org.boggle.ParseUtils.wordListToString;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:8081")  // Adjust the URL to your frontend's URL if necessary
@@ -47,9 +48,9 @@ public class BoggleController {
 
         List<String> allBoggleWords = boggleSolver.getAllBoggleWords(grid, grid.length);
 
-        System.out.println(allBoggleWords);
+        String wordListString = wordListToString(allBoggleWords);
 
-        return "";
+        return wordListString;
     }
 
 

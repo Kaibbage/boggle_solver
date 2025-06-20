@@ -6,10 +6,7 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static org.boggle.Constants.MIN_WORD_SIZE;
 import static org.boggle.Constants.directions;
@@ -21,7 +18,7 @@ public class BoggleSolver {
 
     public BoggleSolver(){
         head = new TrieNode();
-        List<String> allWords = loadWords("textfiles/words_alpha.txt");
+        List<String> allWords = loadWords("textfiles/words_lowercase.txt");
         buildTrie(allWords);
     }
 
@@ -79,6 +76,16 @@ public class BoggleSolver {
                 dfs(grid, head, sb, boggleWords, seen, usedWords, r, c, n);
             }
         }
+        //sorted by length, if same length then sorted alphabetically
+        Collections.sort(boggleWords, (a, b) -> {
+            if(a.length() != b.length()){
+                return Integer.compare(a.length(), b.length());
+            }
+            else{
+                return a.compareTo(b);
+            }
+
+        });
         return boggleWords;
     }
 

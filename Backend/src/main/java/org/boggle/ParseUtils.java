@@ -1,5 +1,7 @@
 package org.boggle;
 
+import java.util.List;
+
 public class ParseUtils {
     public static char[][] getGridFromString(String stringGrid){
         String[] splitString = stringGrid.split("::");
@@ -18,6 +20,16 @@ public class ParseUtils {
         }
 
         return grid;
+    }
+
+    public static String wordListToString(List<String> wordList){
+        StringBuilder sb = new StringBuilder();
+        for(String word: wordList){
+            sb.append(word + " ");
+        }
+        sb.deleteCharAt(sb.length()-1);
+
+        return sb.toString();
     }
 
 }

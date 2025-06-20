@@ -107,6 +107,14 @@ function checkSizeAndGenerateGrid(){
     }
 }
 
+function isLetter(char) {
+  const code = char.charCodeAt(0);
+  return (
+    (code >= 65 && code <= 90) ||  // A-Z
+    (code >= 97 && code <= 122)     // a-z
+  );
+}
+
 //strings are immutable in js, we can maybe improve performance by creating an arraylist [] and adding (with push) and then using join at the end, just have to consider last string
 //how to remove last space, time complexity of this is O(n^2) T_T
 function getGridString(){
@@ -116,7 +124,7 @@ function getGridString(){
             let cell = document.getElementById(`cell-${row}-${col}`);
             let currentChar = cell.value;
 
-            if(!currentChar){
+            if(!currentChar || !isLetter(currentChar)){
                 sentString += "fail";
             }
 
@@ -130,7 +138,7 @@ function getGridString(){
 function startSolving(){
     let sentString = getGridString();
     if(sentString.includes("fail")){
-        alert("The boggle grid is not filled :(");
+        alert("The boggle grid is not filled or is filled with non chars :(");
     }
     else{
         sendToBackend(sentString);
@@ -151,6 +159,7 @@ async function sendToBackend(dataAsString) {
         });
 
         const result = await response.text(); // Extract result
+        loadWordsInTextBox(result);
         console.log(result);
         return result; //return result, unnecessary here but we keep for fun
 
@@ -160,13 +169,91 @@ async function sendToBackend(dataAsString) {
     }
 }
 
+//this one in combo with the other part commented out would work on click, not on hover
+// function loadWordsInTextBox(wordListString){
+//     let wordList = getWordListFromString(wordListString);
+//     let wordTextBox = document.getElementById("words-textbox");
+
+//     wordTextBox.value = "";
+//     for(let word of wordList){
+//         wordTextBox.value += word + "\n";
+//     }
+// }
+
+//will have to change this when sending path info
+function getWordListFromString(wordListString){
+    return wordListString.split(" ");
+}
+
+function getWordAtPosition(text, pos) {
+    //finding boundaries of word
+    let start = pos;
+    let end = pos;
+
+    while (start > 0 && isLetter(text[start - 1])) start--;
+    while (end < text.length && isLetter(text[end])) end++;
+
+    return text.substring(start, end);
+}
+
+
+//this one works with hover and click
+function loadWordsInTextBox(wordListString) {
+    let wordList = getWordListFromString(wordListString);
+    let wordTextBox = document.getElementById("words-textbox");
+    
+    //clear box
+    wordTextBox.innerHTML = "";
+    
+    //add each word on a new line as div so clickable and with and click functionality
+    wordList.forEach(word => {
+        const wordElement = document.createElement('div');
+        wordElement.textContent = word;
+        wordElement.classList.add('word-item');
+        
+        // Click event to show the word in an alert
+        wordElement.addEventListener('click', function() {
+            alert("Clicked word: " + word);
+        });
+        
+        wordTextBox.appendChild(wordElement);
+    });
+
+    //add hover functionality to word divs
+    wordTextBox.addEventListener('mousemove', (e) => {
+        const range = document.caretRangeFromPoint(e.clientX, e.clientY);
+        if (!range) return;
+        
+        const textNode = range.startContainer;
+        const text = textNode.textContent;
+        const offset = range.startOffset;
+        
+        const word = getWordAtPosition(text, offset);
+        document.getElementById("current-word").value = word;
+    });
+}
+
+function getWordListFromString(wordListString) {
+    return wordListString.split(" ");
+}
+
 function initialize(){
     const generateBtn = document.getElementById('generate-btn');
     const solveBtn = document.getElementById('solve-btn');
+    let wordTextBox = document.getElementById("words-textbox");
 
     generateBtn.addEventListener('click', checkSizeAndGenerateGrid);
 
-    solveBtn.addEventListener('click', startSolving); //nothing yet lmao
+    solveBtn.addEventListener('click', startSolving);
+
+    //works if click
+    // wordTextBox.addEventListener('mousemove', (e) => {
+    //     let currentWordHolder = document.getElementById("current-word")
+    //     const text = wordTextBox.value;
+    //     const cursorPos = wordTextBox.selectionStart; // Approximate position
+    //     const word = getWordAtPosition(text, cursorPos);
+    //     currentWordHolder.value = word;
+    // });
 
 
     generateGrid();
