@@ -170,3 +170,13 @@ button:hover {
 .word-item:hover {
     background-color: #f0f0f0;
 }
+
+.white {
+    background-color: #f9f9f9;
+    border: 2px solid #ddd;
+}
+
+.green {
+    background-color: lightgreen;
+    border: 2px solid lightgreen;
+}

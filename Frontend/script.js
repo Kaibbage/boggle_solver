@@ -235,19 +235,77 @@ function loadWords(wordPathListString) {
         wordElement.classList.add('word-item');
         
         wordElement.addEventListener('click', function() {
-            alert("Clicked word: " + word);
+            gradualLoadPathGreen(word);
         });
 
         wordElement.addEventListener('mouseenter', function() {
             currentWordInput.value = word;
+            loadPathGreen(word);
         });
 
         wordElement.addEventListener('mouseleave', function() {
             currentWordInput.value = "";
+            setBackWhite(word);
         });
         
         wordTextBox.appendChild(wordElement);
     });
+}
+
+function setBackWhite(word){
+    let path = wordToPathMap.get(word);
+
+    for(let coord of path){
+        let r = coord[0];
+        let c = coord[1];
+
+        let cell = document.getElementById(`cell-${r}-${c}`);
+        cell.classList.remove("green");
+        cell.classList.add("white");
+    }
+}
+
+function loadPathGreen(word){
+    let path = wordToPathMap.get(word);
+
+    for(let coord of path){
+        let r = coord[0];
+        let c = coord[1];
+
+        let cell = document.getElementById(`cell-${r}-${c}`);
+        cell.classList.remove("white");
+        cell.classList.add("green");
+    }
+}
+
+function gradualLoadPathGreen(word){
+    let path = wordToPathMap.get(word);
+
+    //set all white since will be green
+    for(let coord of path){
+        let r = coord[0];
+        let c = coord[1];
+
+        let cell = document.getElementById(`cell-${r}-${c}`);
+        cell.classList.remove("green");
+        cell.classList.add("white");
+    }
+
+    //gradually set back to green
+    let delay = 100;
+    for(let coord of path){
+        let r = coord[0];
+        let c = coord[1];
+
+        let cell = document.getElementById(`cell-${r}-${c}`);
+
+        setTimeout(() => {
+            cell.classList.remove("white");
+            cell.classList.add("green");
+        }, delay);
+
+        delay += 200
+    }
 }
 
 function setUpWordPathMap(allWords, allPaths){
