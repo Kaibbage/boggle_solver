@@ -1,54 +1,20 @@
 const apiBaseUrl = "http://localhost:8080";
 let gridSize = 5;
+let wordToPathMap = new Map();
 
 
-function addCellFunctions(cell, row, col){
-    cell.addEventListener('keydown', function(e) {
-        //deleting goes to previous cell
-        if (e.key === 'Backspace' || e.key === 'Delete') {
-            if (this.value === '') {
-                //if hit while empty go to previous cell
-                if (col > 0) {
-                    const prevCell = document.getElementById(`cell-${row}-${col-1}`);
-                    if (prevCell) {
-                        prevCell.focus();
-                        prevCell.value = '';
-                    }
-                } else if (row > 0) {
-                    const prevCell = document.getElementById(`cell-${row-1}-${gridSize-1}`);
-                    if (prevCell) {
-                        prevCell.focus();
-                        prevCell.value = '';
-                    }
-                }
-            } else {
-                //clear cell
-                this.value = '';
-            }
-            e.preventDefault();
-            return;
-        }
-                        
-        //change cell with arrows keys
-        if (e.key === 'ArrowRight') {
-            const nextCell = col < gridSize - 1 ? document.getElementById(`cell-${row}-${col+1}`) : null;
-            if (nextCell) nextCell.focus();
-        } 
-        else if (e.key === 'ArrowLeft') {
-            const prevCell = col > 0 ? document.getElementById(`cell-${row}-${col-1}`) : null;
-            if (prevCell) prevCell.focus();
-        } 
-        else if (e.key === 'ArrowDown') {
-            const belowCell = row < gridSize - 1 ? document.getElementById(`cell-${row+1}-${col}`) : null;
-            if (belowCell) belowCell.focus();
-        } 
-        else if (e.key === 'ArrowUp') {
-            const aboveCell = row > 0 ? document.getElementById(`cell-${row-1}-${col}`) : null;
-            if (aboveCell) aboveCell.focus();
-        }
-                        
+function handleMultipleChars(event){
+    const focusedElement = document.activeElement;
+    const currentId = focusedElement.id;
+    const match = currentId.match(/^cell-(\d)-(\d)$/);
+
+    if(match){
         //go to next cell after typing a character
-        if (e.key.length === 1 && e.key.match(/[a-z0-9]/i)) {
+        let row = parseInt(match[1]);
+        let col = parseInt(match[2]);
+        
+
+        if (event.key.length === 1 && event.key.match(/[a-z0-9]/i)) {
             setTimeout(() => {
                 let nextCell;
                 if (col < gridSize - 1) {
@@ -62,7 +28,71 @@ function addCellFunctions(cell, row, col){
                 }
             }, 10);
         }
-    });
+
+    }
+}
+
+function handleArrowKeys(event){
+    const focusedElement = document.activeElement;
+    const currentId = focusedElement.id;
+    const match = currentId.match(/^cell-(\d)-(\d)$/);
+
+    if(match){
+        //change cell with arrows keys
+        let row = parseInt(match[1]);
+        let col = parseInt(match[2]);
+
+        if (event.key === 'ArrowRight') {
+            const nextCell = col < gridSize - 1 ? document.getElementById(`cell-${row}-${col+1}`) : null;
+            if (nextCell) nextCell.focus();
+        } 
+        else if (event.key === 'ArrowLeft') {
+            const prevCell = col > 0 ? document.getElementById(`cell-${row}-${col-1}`) : null;
+            if (prevCell) prevCell.focus();
+        } 
+        else if (event.key === 'ArrowDown') {
+            const belowCell = row < gridSize - 1 ? document.getElementById(`cell-${row+1}-${col}`) : null;
+            if (belowCell) belowCell.focus();
+        } 
+        else if (event.key === 'ArrowUp') {
+            const aboveCell = row > 0 ? document.getElementById(`cell-${row-1}-${col}`) : null;
+            if (aboveCell) aboveCell.focus();
+        }
+    }
+}
+
+function handleDeleteBackspace(event){
+    const focusedElement = document.activeElement;
+    const currentId = focusedElement.id;
+    const match = currentId.match(/^cell-(\d)-(\d)$/);
+
+    if(match){
+        //deleting goes to previous cell
+        let row = parseInt(match[1]);
+        let col = parseInt(match[2]);
+        
+        if (this.value === '') {
+            //if hit while empty go to previous cell
+            if (col > 0) {
+                const prevCell = document.getElementById(`cell-${row}-${col-1}`);
+                if (prevCell) {
+                    prevCell.focus();
+                    prevCell.value = '';
+                }
+            } else if (row > 0) {
+                const prevCell = document.getElementById(`cell-${row-1}-${gridSize-1}`);
+                if (prevCell) {
+                    prevCell.focus();
+                    prevCell.value = '';
+                }
+            }
+        } else {
+            //clear cell
+            this.value = '';
+        }
+        event.preventDefault();
+        return;
+    }
 }
         
 function generateGrid() {
@@ -77,8 +107,6 @@ function generateGrid() {
             cell.maxLength = 1;
             cell.className = 'grid-cell';
             cell.id = `cell-${row}-${col}`;
-    
-            addCellFunctions(cell, row, col);
                     
             gridContainer.appendChild(cell);
         }
@@ -159,7 +187,7 @@ async function sendToBackend(dataAsString) {
         });
 
         const result = await response.text(); // Extract result
-        loadWordsInTextBox(result);
+        loadWords(result);
         console.log(result);
         return result; //return result, unnecessary here but we keep for fun
 
@@ -171,8 +199,8 @@ async function sendToBackend(dataAsString) {
 
 //will have to change this when sending path info
 function getWordListFromString(wordPathListString){
-    let wordPathString = wordPathListString.split("::")[0];
-    return wordPathString.split(" ");
+    let wordListString = wordPathListString.split("::")[0];
+    return wordListString.split(" ");
 }
 
 function getWordAtPosition(text, pos) {
@@ -188,39 +216,72 @@ function getWordAtPosition(text, pos) {
 
 
 //this one works with hover and click
-function loadWordsInTextBox(wordPathListString) {
+function loadWords(wordPathListString) {
     let wordList = getWordListFromString(wordPathListString);
+    let pathList = getPathListFromString(wordPathListString);
+
+    setUpWordPathMap(wordList, pathList);
+
     let wordTextBox = document.getElementById("words-textbox");
+    let currentWordInput = document.getElementById("current-word");
     
-    //clear box
     wordTextBox.innerHTML = "";
+    currentWordInput.value = "";
     
-    //add each word on a new line as div so clickable and with and click functionality
+    //each word added as div so clickable and can do stuff with
     wordList.forEach(word => {
         const wordElement = document.createElement('div');
         wordElement.textContent = word;
         wordElement.classList.add('word-item');
         
-        // Click event to show the word in an alert
         wordElement.addEventListener('click', function() {
             alert("Clicked word: " + word);
+        });
+
+        wordElement.addEventListener('mouseenter', function() {
+            currentWordInput.value = word;
+        });
+
+        wordElement.addEventListener('mouseleave', function() {
+            currentWordInput.value = "";
         });
         
         wordTextBox.appendChild(wordElement);
     });
+}
 
-    //add hover functionality to word divs
-    wordTextBox.addEventListener('mousemove', (e) => {
-        const range = document.caretRangeFromPoint(e.clientX, e.clientY);
-        if (!range) return;
-        
-        const textNode = range.startContainer;
-        const text = textNode.textContent;
-        const offset = range.startOffset;
-        
-        const word = getWordAtPosition(text, offset);
-        document.getElementById("current-word").value = word;
-    });
+function setUpWordPathMap(allWords, allPaths){
+    for(let i = 0; i < allWords.length; i++){
+        wordToPathMap.set(allWords[i], allPaths[i]);
+    }
+}
+
+function getPathListFromString(wordPathListString){
+    let pathListAsString = wordPathListString.split("::")[1];
+
+    let pathListAsListOfStrings = pathListAsString.split("$");
+
+    let index = 0;
+    let allPaths = [];
+    for(let pathString of pathListAsListOfStrings){
+
+        let path = [];
+        let pathCoordStringList = pathString.split("|");
+
+        for(let pathCoordString of pathCoordStringList){
+            let pathCoords = pathCoordString.split(" ");
+            let r = parseInt(pathCoords[0]);
+            let c = parseInt(pathCoords[1]);
+
+            let coord = new Array(r, c);
+            path.push(coord);
+
+        }
+        allPaths.push(path);
+
+    }
+
+    return allPaths;
 }
 
 function initialize(){
@@ -232,6 +293,16 @@ function initialize(){
     solveBtn.addEventListener('click', startSolving);
 
     generateGrid();
+
+    document.addEventListener('keydown', (event) => {
+        if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) {
+            handleArrowKeys(event);
+        } else if (event.key === 'Backspace' || event.key === 'Delete') {
+            handleDeleteBackspace(event);
+        } else if (event.key.length === 1 && event.key.match(/[a-z0-9]/i)){
+            handleMultipleChars(event);
+        }
+    });
 }
 
 initialize();
