@@ -6,8 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.boggle.ParseUtils.getGridFromString;
-import static org.boggle.ParseUtils.wordListToString;
+import static org.boggle.ParseUtils.*;
 
 @RestController
 @CrossOrigin(origins = "http://127.0.0.1:8081")  // Adjust the URL to your frontend's URL if necessary
@@ -46,11 +45,11 @@ public class BoggleController {
 
         char[][] grid = getGridFromString(input);
 
-        List<String> allBoggleWords = boggleSolver.getAllBoggleWords(grid, grid.length);
+        List<WordAndPath> allBoggleWordPaths = boggleSolver.getAllBoggleWords(grid, grid.length);
 
-        String wordListString = wordListToString(allBoggleWords);
+        String wordPathListString = wordPathListToString(allBoggleWordPaths);
 
-        return wordListString;
+        return wordPathListString;
     }
 
 

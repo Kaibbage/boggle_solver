@@ -65,42 +65,44 @@ public class BoggleSolver {
         curr.end = true;
     }
 
-    public List<String> getAllBoggleWords(char[][] grid, int n){
-        List<String> boggleWords = new ArrayList<>();
+    public List<WordAndPath> getAllBoggleWords(char[][] grid, int n){
+        List<WordAndPath> boggleWordPaths = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         boolean[][] seen = new boolean[n][n];
         HashSet<String> usedWords = new HashSet<>();
+        List<int[]> path = new ArrayList<>();
 
         for(int r = 0; r < n; r++){
             for(int c = 0; c < n; c++){
-                dfs(grid, head, sb, boggleWords, seen, usedWords, r, c, n);
+                dfs(grid, head, sb, path, boggleWordPaths, seen, usedWords, r, c, n);
             }
         }
         //sorted by length, if same length then sorted alphabetically
-        Collections.sort(boggleWords, (a, b) -> {
-            if(a.length() != b.length()){
-                return Integer.compare(a.length(), b.length());
+        Collections.sort(boggleWordPaths, (a, b) -> {
+            if(a.word.length() != b.word.length()){
+                return Integer.compare(a.word.length(), b.word.length());
             }
             else{
-                return a.compareTo(b);
+                return a.word.compareTo(b.word);
             }
 
         });
-        return boggleWords;
+        return boggleWordPaths;
     }
 
-    public void dfs(char[][] grid, TrieNode curr, StringBuilder sb, List<String> boggleWords, boolean[][] seen, HashSet<String> usedWords, int r, int c, int n){
+    public void dfs(char[][] grid, TrieNode curr, StringBuilder sb, List<int[]> path, List<WordAndPath> boggleWordPaths, boolean[][] seen, HashSet<String> usedWords, int r, int c, int n){
         if(seen[r][c] || curr.children[grid[r][c] - 'a'] == null){
             return;
         }
 
         seen[r][c] = true;
         sb.append(grid[r][c]);
+        path.add(new int[]{r, c});
         curr = curr.children[grid[r][c] - 'a'];
 
         String wordString = sb.toString();
         if(curr.end && sb.length() >= MIN_WORD_SIZE && !usedWords.contains(wordString)){
-            boggleWords.add(wordString);
+            boggleWordPaths.add(new WordAndPath(wordString, path));
             usedWords.add(wordString);
         }
 
@@ -109,11 +111,12 @@ public class BoggleSolver {
             int nc = c + direction[1];
 
             if(nr >= 0 && nr < n && nc >= 0 && nc < n){
-                dfs(grid, curr, sb, boggleWords, seen, usedWords, nr, nc, n);
+                dfs(grid, curr, sb, path, boggleWordPaths, seen, usedWords, nr, nc, n);
             }
         }
 
         sb.deleteCharAt(sb.length()-1);
+        path.remove(path.size()-1);
         seen[r][c] = false;
     }
 }

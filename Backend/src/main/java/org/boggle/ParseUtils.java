@@ -22,10 +22,32 @@ public class ParseUtils {
         return grid;
     }
 
-    public static String wordListToString(List<String> wordList){
+    public static String wordPathListToString(List<WordAndPath> wordList){
+        String wordString = wordsToString(wordList);
+        String pathString = pathsToString(wordList);
+
+        return wordString + "::" + pathString;
+    }
+
+    public static String wordsToString(List<WordAndPath> wordList){
         StringBuilder sb = new StringBuilder();
-        for(String word: wordList){
-            sb.append(word + " ");
+        for(WordAndPath wordAndPath: wordList){
+            sb.append(wordAndPath.word + " ");
+        }
+        sb.deleteCharAt(sb.length()-1);
+
+        return sb.toString();
+    }
+
+    public static String pathsToString(List<WordAndPath> wordList){
+        StringBuilder sb = new StringBuilder();
+        for(WordAndPath wordAndPath: wordList){
+            for(int[] pos: wordAndPath.path){
+                sb.append(pos[0] + " " + pos[1] + "|");
+            }
+            sb.deleteCharAt(sb.length()-1);
+
+            sb.append("$");
         }
         sb.deleteCharAt(sb.length()-1);
 

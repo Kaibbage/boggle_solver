@@ -169,20 +169,10 @@ async function sendToBackend(dataAsString) {
     }
 }
 
-//this one in combo with the other part commented out would work on click, not on hover
-// function loadWordsInTextBox(wordListString){
-//     let wordList = getWordListFromString(wordListString);
-//     let wordTextBox = document.getElementById("words-textbox");
-
-//     wordTextBox.value = "";
-//     for(let word of wordList){
-//         wordTextBox.value += word + "\n";
-//     }
-// }
-
 //will have to change this when sending path info
-function getWordListFromString(wordListString){
-    return wordListString.split(" ");
+function getWordListFromString(wordPathListString){
+    let wordPathString = wordPathListString.split("::")[0];
+    return wordPathString.split(" ");
 }
 
 function getWordAtPosition(text, pos) {
@@ -198,8 +188,8 @@ function getWordAtPosition(text, pos) {
 
 
 //this one works with hover and click
-function loadWordsInTextBox(wordListString) {
-    let wordList = getWordListFromString(wordListString);
+function loadWordsInTextBox(wordPathListString) {
+    let wordList = getWordListFromString(wordPathListString);
     let wordTextBox = document.getElementById("words-textbox");
     
     //clear box
@@ -233,28 +223,13 @@ function loadWordsInTextBox(wordListString) {
     });
 }
 
-function getWordListFromString(wordListString) {
-    return wordListString.split(" ");
-}
-
 function initialize(){
     const generateBtn = document.getElementById('generate-btn');
     const solveBtn = document.getElementById('solve-btn');
-    let wordTextBox = document.getElementById("words-textbox");
 
     generateBtn.addEventListener('click', checkSizeAndGenerateGrid);
 
     solveBtn.addEventListener('click', startSolving);
-
-    //works if click
-    // wordTextBox.addEventListener('mousemove', (e) => {
-    //     let currentWordHolder = document.getElementById("current-word")
-    //     const text = wordTextBox.value;
-    //     const cursorPos = wordTextBox.selectionStart; // Approximate position
-    //     const word = getWordAtPosition(text, cursorPos);
-    //     currentWordHolder.value = word;
-    // });
-
 
     generateGrid();
 }
