@@ -54,4 +54,15 @@ public class ParseUtils {
         return sb.toString();
     }
 
+    public static String randomGridToString(List<Character> chars){
+        StringBuilder sb = new StringBuilder();
+        for(char c: chars){
+            sb.append(c + " ");
+        }
+
+        sb.deleteCharAt(sb.length()-1);
+
+        return sb.toString();
+    }
+
 }

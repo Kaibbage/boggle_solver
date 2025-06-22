@@ -71,7 +71,7 @@ function handleDeleteBackspace(event){
         let row = parseInt(match[1]);
         let col = parseInt(match[2]);
         
-        if (this.value === '') {
+        if (focusedElement.value === '') {
             //if hit while empty go to previous cell
             if (col > 0) {
                 const prevCell = document.getElementById(`cell-${row}-${col-1}`);
@@ -88,9 +88,13 @@ function handleDeleteBackspace(event){
             }
         } else {
             //clear cell
-            this.value = '';
+            focusedElement.value = '';
         }
         event.preventDefault();
+
+        let wordTextBox = document.getElementById("words-textbox");
+        wordTextBox.innerHTML = "";
+
         return;
     }
 }
@@ -117,7 +121,10 @@ function generateGrid() {
     }
     
     const gridTitle = document.getElementById('grid-title');
-    gridTitle.textContent = `${gridSize}x${gridSize} boggle grid`; 
+    gridTitle.textContent = `${gridSize}x${gridSize} boggle grid`;
+
+    let wordTextBox = document.getElementById("words-textbox");
+    wordTextBox.innerHTML = "";
 }
          
 
@@ -169,12 +176,12 @@ function startSolving(){
         alert("The boggle grid is not filled or is filled with non chars :(");
     }
     else{
-        sendToBackend(sentString);
+        sendSolveToBackend(sentString);
     }
     
 }
 
-async function sendToBackend(dataAsString) {
+async function sendSolveToBackend(dataAsString) {
     const data = { input: dataAsString };
 
     try {
@@ -253,15 +260,24 @@ function loadWords(wordPathListString) {
 }
 
 function setBackWhite(word){
-    let path = wordToPathMap.get(word);
+    // let path = wordToPathMap.get(word);
 
-    for(let coord of path){
-        let r = coord[0];
-        let c = coord[1];
+    // for(let coord of path){
+    //     let r = coord[0];
+    //     let c = coord[1];
 
-        let cell = document.getElementById(`cell-${r}-${c}`);
-        cell.classList.remove("green");
-        cell.classList.add("white");
+    //     let cell = document.getElementById(`cell-${r}-${c}`);
+    //     cell.classList.remove("green");
+    //     cell.classList.add("white");
+    // }
+
+    //for now clearing all, may change back later
+    for(let r = 0; r < gridSize; r++){
+        for(let c = 0; c < gridSize; c++){
+            let cell = document.getElementById(`cell-${r}-${c}`);
+            cell.classList.remove("green");
+            cell.classList.add("white");
+        }
     }
 }
 
@@ -342,13 +358,63 @@ function getPathListFromString(wordPathListString){
     return allPaths;
 }
 
+async function generateRandomBoggle(){
+    let n = gridSize;
+    let stringN = n.toString();
+
+    let gridString = await getRandomBoggleFromBackend(stringN);
+    setGrid(n, gridString);
+
+    let wordTextBox = document.getElementById("words-textbox");
+    wordTextBox.innerHTML = "";
+
+}
+
+function setGrid(n, gridString){
+    console.log(gridString);
+    let chars = gridString.split(" ");
+
+    let counter = 0;
+    for(let c of chars){
+        let row = Math.floor(counter / n);
+        let col = counter % n;
+
+        let cell = document.getElementById(`cell-${row}-${col}`);
+        cell.value = c;
+
+        counter++;
+    }
+}
+
+async function getRandomBoggleFromBackend(dataAsString) {
+    const data = { input: dataAsString };
+
+    try {
+        const response = await fetch(`${apiBaseUrl}/generate-random-boggle-grid`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data), //sendinginfo
+        });
+
+        const result = await response.text(); // Extract result
+        return result; 
+
+    } catch (error) {
+        console.error("Error:", error);
+        throw error; //throw error if needed
+    }
+}
+
 function initialize(){
-    const generateBtn = document.getElementById('generate-btn');
+    const resizeBtn = document.getElementById('resize-btn');
     const solveBtn = document.getElementById('solve-btn');
+    const generateRandomBtn = document.getElementById("generate-random-btn");
 
-    generateBtn.addEventListener('click', checkSizeAndGenerateGrid);
-
+    resizeBtn.addEventListener('click', checkSizeAndGenerateGrid);
     solveBtn.addEventListener('click', startSolving);
+    generateRandomBtn.addEventListener('click', generateRandomBoggle);
 
     generateGrid();
 

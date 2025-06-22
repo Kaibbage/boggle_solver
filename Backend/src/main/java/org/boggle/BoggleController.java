@@ -13,17 +13,12 @@ import static org.boggle.ParseUtils.*;
 public class BoggleController {
 
     public BoggleSolver boggleSolver;
+    public Dice dice;
 
-//    private GraphExploreWebSocketHandler webSocketHandler;
-
-    // Constructor injection of WebSocket handler
-//    public GraphExploreController(GraphExploreWebSocketHandler webSocketHandler) {
-//        this.webSocketHandler = webSocketHandler;
-//        graphAlgorithms = new GraphAlgorithms(webSocketHandler);
-//    }
 
     public BoggleController(){
         boggleSolver = new BoggleSolver();
+        dice = new Dice();
     }
 
     public static class InputRequest {
@@ -40,7 +35,7 @@ public class BoggleController {
 
 
     @PostMapping("/solve-boggle-all-at-once")
-    public String startSolvingDijkstra(@RequestBody InputRequest request) {
+    public String solveBoggleAllAtOnce(@RequestBody InputRequest request) {
         String input = request.getInput();
 
         char[][] grid = getGridFromString(input);
@@ -52,25 +47,21 @@ public class BoggleController {
         return wordPathListString;
     }
 
+    @PostMapping("/generate-random-boggle-grid")
+    public String generateRandomBoggleGrid(@RequestBody InputRequest request) {
+        String input = request.getInput();
+
+        int n = Integer.parseInt(input);
+
+        List<Character> charList = dice.getCharList(n);
+
+        String chars = randomGridToString(charList);
+
+        return chars;
+    }
 
 
-//    @PostMapping("/start-solving-dijkstra")
-//    public String startSolvingDijkstra(@RequestBody InputRequest request) {
-//        String input = request.getInput();
-//
-//        int[][] grid = ParseUtils.getGridFromString(input);
-//
-//        new Thread(() -> {
-//            try {
-//                graphAlgorithms.dijkstra(grid);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }).start();
-//
-//
-//        return "Shortest Path solving started";
-//    }
+
 
 
 

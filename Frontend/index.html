@@ -13,8 +13,9 @@
             
             <div class="controls">
                 <input type="number" id="grid-size-input" min="4" max="8" value="5">
-                <button id="generate-btn">Generate</button>
+                <button id="resize-btn">Resize Grid</button>
                 <button id="solve-btn">Solve</button>
+                <button id="generate-random-btn">Generate Random</button>
             </div>
             
             <div class="grid-container" id="grid-container"></div>
@@ -22,7 +23,7 @@
         
         <div class="textbox-container">
             <h2>Word List</h2>
-            <div id="words-textbox" class="word-list-display" contenteditable="false"></div>
+            <div id="words-textbox" contenteditable="false"></div>
             <input id="current-word" readonly>
             <p class="textbox-instructions">Words found will be displayed here</p>
         </div>
