@@ -3,6 +3,10 @@ let gridSize = 5;
 let wordToPathMap = new Map();
 
 
+//maybe add a button that will switch these to another very similar clone page
+//where cell size is not a constant and we can allow more than 8 as max size to see if can get big words
+
+
 function handleMultipleChars(event){
     const focusedElement = document.activeElement;
     const currentId = focusedElement.id;
@@ -252,26 +256,14 @@ function loadWords(wordPathListString) {
 
         wordElement.addEventListener('mouseleave', function() {
             currentWordInput.value = "";
-            setBackWhite(word);
+            setBackWhite();
         });
         
         wordTextBox.appendChild(wordElement);
     });
 }
 
-function setBackWhite(word){
-    // let path = wordToPathMap.get(word);
-
-    // for(let coord of path){
-    //     let r = coord[0];
-    //     let c = coord[1];
-
-    //     let cell = document.getElementById(`cell-${r}-${c}`);
-    //     cell.classList.remove("green");
-    //     cell.classList.add("white");
-    // }
-
-    //for now clearing all, may change back later
+function setBackWhite(){
     for(let r = 0; r < gridSize; r++){
         for(let c = 0; c < gridSize; c++){
             let cell = document.getElementById(`cell-${r}-${c}`);
