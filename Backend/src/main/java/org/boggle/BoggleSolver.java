@@ -77,10 +77,10 @@ public class BoggleSolver {
                 dfs(grid, head, sb, path, boggleWordPaths, seen, usedWords, r, c, n);
             }
         }
-        //sorted by length, if same length then sorted alphabetically
+        //sorted by length (biggest to smallest), if same length then sorted alphabetically
         Collections.sort(boggleWordPaths, (a, b) -> {
             if(a.word.length() != b.word.length()){
-                return Integer.compare(a.word.length(), b.word.length());
+                return Integer.compare(b.word.length(), a.word.length());
             }
             else{
                 return a.word.compareTo(b.word);

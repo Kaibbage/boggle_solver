@@ -238,6 +238,8 @@ function loadWords(wordPathListString) {
     
     wordTextBox.innerHTML = "";
     currentWordInput.value = "";
+
+    console.log(wordList.length);
     
     //each word added as div so clickable and can do stuff with
     wordList.forEach(word => {
@@ -252,6 +254,7 @@ function loadWords(wordPathListString) {
         wordElement.addEventListener('mouseenter', function() {
             currentWordInput.value = word;
             loadPathGreen(word);
+            lookupWord(word);
         });
 
         wordElement.addEventListener('mouseleave', function() {
@@ -262,6 +265,36 @@ function loadWords(wordPathListString) {
         wordTextBox.appendChild(wordElement);
     });
 }
+
+async function lookupWord(word) {
+    const definitionBox = document.getElementById("word-definition");
+
+    if(!word){
+        definitionBox.value = "Please enter a word.";
+        return;
+    }
+
+    try{
+        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+
+        if(!response.ok){
+            throw new Error("Word not found");
+        }
+
+        const data = await response.json();
+
+        const meanings = data[0].meanings.map(meaning => {
+            const defs = meaning.definitions.map(def => `- ${def.definition}`).join('\n');
+            return `${meaning.partOfSpeech}:\n${defs}`;
+        }).join('\n\n');
+
+        definitionBox.textContent = `Definitions for "${word}":\n\n${meanings}`;
+    }
+    catch (error){
+        definitionBox.textContent = `Error: ${error.message}`;
+    } 
+}
+
 
 function setBackWhite(){
     for(let r = 0; r < gridSize; r++){
@@ -312,7 +345,7 @@ function gradualLoadPathGreen(word){
             cell.classList.add("green");
         }, delay);
 
-        delay += 200
+        delay += 300
     }
 }
 

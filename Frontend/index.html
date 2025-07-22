@@ -8,6 +8,20 @@
 </head>
 <body>
     <div class="main-content">
+        <div id="left-panel" class="left-panel extra">
+            <div id="status-container" class="status-container extra">
+                <div id="status-label" class="status-label">wseiruhweiur</div>
+                <div id="status-circle" class="status-indicator"></div>
+            </div>
+        
+            <div id='instruction-container'class="instruction-container extra">
+                <p id="instruction-text">Click here to get instructions</p>
+                <button id="next-button" onclick = "setInstructionInfo()">Next</button>
+            </div>
+
+            <button id="hide-button" onclick="hideOrShow()">Hide extra widgets</button>
+        </div>
+
         <div class="container">
             <h1 id="grid-title"></h1>
             
@@ -26,6 +40,9 @@
             <div id="words-textbox" contenteditable="false"></div>
             <input id="current-word" readonly>
             <p class="textbox-instructions">Words found will be displayed here</p>
+        </div>
+        <div class ="right-panel">
+            <p id="word-definition" class="word-definition">Definitions of words here</p>
         </div>
     </div>
 
