@@ -254,7 +254,7 @@ function loadWords(wordPathListString) {
         wordElement.addEventListener('mouseenter', function() {
             currentWordInput.value = word;
             loadPathGreen(word);
-            lookupWord(word);
+            // lookupWord(word);
         });
 
         wordElement.addEventListener('mouseleave', function() {
@@ -266,34 +266,34 @@ function loadWords(wordPathListString) {
     });
 }
 
-async function lookupWord(word) {
-    const definitionBox = document.getElementById("word-definition");
+// async function lookupWord(word) {
+//     const definitionBox = document.getElementById("word-definition");
 
-    if(!word){
-        definitionBox.value = "Please enter a word.";
-        return;
-    }
+//     if(!word){
+//         definitionBox.value = "Please enter a word.";
+//         return;
+//     }
 
-    try{
-        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+//     try{
+//         const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
 
-        if(!response.ok){
-            throw new Error("Word not found");
-        }
+//         if(!response.ok){
+//             throw new Error("Word not found");
+//         }
 
-        const data = await response.json();
+//         const data = await response.json();
 
-        const meanings = data[0].meanings.map(meaning => {
-            const defs = meaning.definitions.map(def => `- ${def.definition}`).join('\n');
-            return `${meaning.partOfSpeech}:\n${defs}`;
-        }).join('\n\n');
+//         const meanings = data[0].meanings.map(meaning => {
+//             const defs = meaning.definitions.map(def => `- ${def.definition}`).join('\n');
+//             return `${meaning.partOfSpeech}:\n${defs}`;
+//         }).join('\n\n');
 
-        definitionBox.textContent = `Definitions for "${word}":\n\n${meanings}`;
-    }
-    catch (error){
-        definitionBox.textContent = `Error: ${error.message}`;
-    } 
-}
+//         definitionBox.textContent = `Definitions for "${word}":\n\n${meanings}`;
+//     }
+//     catch (error){
+//         definitionBox.textContent = `Error: ${error.message}`;
+//     } 
+// }
 
 
 function setBackWhite(){
