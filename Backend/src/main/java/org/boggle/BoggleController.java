@@ -42,7 +42,7 @@ public class BoggleController {
         return "Boggle backend is running!";
     }
 
-    @GetMapping("/is-ready")
+    @RequestMapping(path = "/is-ready", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String getReady() {
         return "finito";
     }
