@@ -47,6 +47,13 @@ public class BoggleController {
         return "ready";
     }
 
+    @PostMapping("/setup-data-structures")
+    public String setupGame() {
+        boggleSolver.setUpWordsAndPrefixTree();
+
+        return "yay";
+    }
+
 
     @PostMapping("/solve-boggle-all-at-once")
     public String solveBoggleAllAtOnce(@RequestBody InputRequest request) {

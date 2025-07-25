@@ -84,6 +84,7 @@ function updateReadyTimer(){
 }
 
 async function markOpen(){
+    await setupBackendDataStructures();
     clearInterval(intervalId);
     clearInterval(readyIntervalId);
 
@@ -133,6 +134,24 @@ async function askBackendIfReady(){
         throw error; // Re-throw the error if needed
     }
 
+}
+
+async function setupGameBackend() {
+
+    try {
+        const response = await fetch(`${apiBaseUrl}/setup-data-structures`, {
+            method: "POST",
+        });
+
+        const result = await response.text(); // Extract result
+        console.log(result);
+
+        return result; // Return the result
+
+    } catch (error) {
+        console.error("Error:", error);
+        throw error; // Re-throw the error if needed
+    }
 }
 
 function disableMainButtons(){

@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 import static org.boggle.Constants.MIN_WORD_SIZE;
@@ -13,33 +14,31 @@ import static org.boggle.Constants.directions;
 
 public class BoggleSolver {
     public TrieNode head;
-    //public HashSet<String> foundBefore; this should be local, not an attribute
-
 
     public BoggleSolver(){
         head = new TrieNode();
+    }
+
+    public void setUpWordsAndPrefixTree(){
         List<String> allWords = loadWords("textfiles/words_lowercase.txt");
         buildTrie(allWords);
     }
 
-    public List<String> loadWords(String filename){
+    public List<String> loadWords(String filename) {
         List<String> allWordList = new ArrayList<>();
-        try {
-            // Get the file from the classpath (resources folder)
-            Resource resource = new ClassPathResource(filename);
-            File file = resource.getFile();  // Get the file from the classpath
 
-            // Read the file content
-            try (Scanner scanner = new Scanner(file)) {
+        try {
+            Resource resource = new ClassPathResource(filename);
+            try (InputStream inputStream = resource.getInputStream();
+                 Scanner scanner = new Scanner(inputStream)) {
+
                 while (scanner.hasNext()) {
                     allWordList.add(scanner.next().toLowerCase());
                 }
                 System.out.println("Dictionary loaded successfully! Words: " + allWordList.size());
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Error: Dictionary file not found!");
         } catch (IOException e) {
-            System.err.println("Error reading the file: " + e.getMessage());
+            System.err.println("Error reading the dictionary file: " + e.getMessage());
         }
 
         return allWordList;
