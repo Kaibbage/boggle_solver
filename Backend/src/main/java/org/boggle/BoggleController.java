@@ -9,7 +9,10 @@ import java.util.List;
 import static org.boggle.ParseUtils.*;
 
 @RestController
-@CrossOrigin(origins = "http://127.0.0.1:8081")  // Adjust the URL to your frontend's URL if necessary
+@CrossOrigin(origins = {
+        "https://typing-substring-match-game.onrend",
+        "http://127.0.0.1:8081"
+})
 public class BoggleController {
 
     public BoggleSolver boggleSolver;
