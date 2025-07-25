@@ -10,7 +10,7 @@ import static org.boggle.ParseUtils.*;
 
 @RestController
 @CrossOrigin(origins = {
-        "https://typing-substring-match-game.onrend",
+        "https://boggle-solver-1.onrender.com",
         "http://127.0.0.1:8081"
 })
 public class BoggleController {
@@ -39,7 +39,7 @@ public class BoggleController {
 
     @GetMapping("/")
     public String home() {
-        return "Boggle is running!";
+        return "Boggle backend is running!";
     }
 
     @GetMapping("/is-ready")

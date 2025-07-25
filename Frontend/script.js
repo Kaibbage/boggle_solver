@@ -1,4 +1,5 @@
-const apiBaseUrl = "http://localhost:8080";
+// const apiBaseUrl = "http://localhost:8080";
+const apiBaseUrl = "https://boggle-solver-1nwj.onrender.com"
 let gridSize = 5;
 let wordToPathMap = new Map();
 
