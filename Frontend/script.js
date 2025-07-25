@@ -122,7 +122,7 @@ async function askBackendIfReady(){
 
         const result = await response.text(); // Extract result
         console.log(result);
-        if(result.includes("ady")){
+        if(result.includes("finito")){
             return true;
         }
         else{
@@ -136,7 +136,7 @@ async function askBackendIfReady(){
 
 }
 
-async function setupGameBackend() {
+async function setupBackendDataStructures() {
 
     try {
         const response = await fetch(`${apiBaseUrl}/setup-data-structures`, {

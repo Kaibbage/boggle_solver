@@ -44,7 +44,7 @@ public class BoggleController {
 
     @GetMapping("/is-ready")
     public String getReady() {
-        return "ready";
+        return "finito";
     }
 
     @PostMapping("/setup-data-structures")
