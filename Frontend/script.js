@@ -107,8 +107,9 @@ function startCheckIfReady(){
     }, 2000);
 }
 
-function checkIfReady(){
-    if(askBackendIfReady()){
+async function checkIfReady() {
+    const ready = await askBackendIfReady();
+    if(ready){
         markOpen();
     }
 }
