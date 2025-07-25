@@ -3,6 +3,153 @@ let gridSize = 5;
 let wordToPathMap = new Map();
 
 
+
+
+function hideOrShow(){
+    const extras = document.querySelectorAll('.extra');
+    
+    extras.forEach(element => {
+        element.style.visibility = 
+            element.style.visibility === 'hidden' ? 'visible' : 'hidden';
+    });
+}
+
+
+function setupHoverInfo() {
+    //info text for each hover over button, could perhaps change to make more detailed
+    const pieces = {
+        'grid-container': 'Enter your boggle letters in these squares, make sure the who grid is filled',
+        'grid-size-input': 'This is the size of the NxN grid, change this and click Resize Grid to change the size of the grid',
+        'resize-btn': 'Click here to change the size of the grid to what is in the number to the left',
+        'solve-btn': 'Click here to solve the boggle grid, it will find every possible boggle word and show them in the widget to the right',
+        'generate-random-btn': 'Click here to generate a random boggle board that will match the dice from the actual boggle game',
+        'words-textbox': 'If the boggle has been solved, hover over a word in here to see the path highlighted in green. Click on the word to see the path traversed in green.',
+
+        'next-button': 'Click here to get the next part of the instructions',
+        'simple-widget': 'Find explanations in here',
+        'status-container': "This will turn green once the website is ready to be used, until then it will be red",
+        'instruction-container': "This box contains instructions",
+        'hide-button': "click this to hide all extra widgets that are just for ease of use"
+    };
+    const infoText = document.getElementById('infoText');
+
+    //adding hover for every button
+    Object.keys(pieces).forEach(pieceId => {
+        const piece = document.getElementById(pieceId);
+        if(piece){
+            piece.addEventListener('mouseenter', () => {
+            infoText.textContent = pieces[pieceId];
+        });
+        piece.addEventListener('mouseleave', () => {
+            infoText.textContent = 'Hover over anything to see information about it.';
+        });
+        }
+    });
+}
+
+let instructions = ["Click here to get instructions", 
+                    "This is a boggle solver application, it will solve any given boggle made up of single letters and put all the possible words in the box to the right",
+                    "If you don't know what boggle is, it is a game about making 4 letter words or longer from a grid of letters. You can start at any square and go in any of the 8 directions without repeating squares to make a word from a path, longer words are worth more points",
+                    "To use this application properly, fill in the entire grid with letters, and then hit solve.",
+                    "If you want to resize the grid, change the grid size number, and then hit Resize Grid",
+                    "This application also has a random board function, to generate a random boggle board in line with the actual boggle game, click the Generate Random function. It will work for all sizes.",
+                    "Once you hit solve and the words show up, hover over them to see that word's path highlighted in green, click on the word to see the path being explored step by step",
+                    "Have fun :)"];
+let instructionNumber = 0;
+
+function setInstructionInfo(){
+    document.getElementById("instruction-text").textContent = instructions[instructionNumber];
+    instructionNumber++;
+    if(instructionNumber == instructions.length){
+        instructionNumber = 0;
+    }
+    
+}
+
+let intervalId;
+let timeToReady = 120;
+function startReadyTimer(){
+    updateReadyTimer();
+    intervalId = setInterval(() => {
+        timeToReady--;
+        updateReadyTimer(); 
+    }, 1000);
+}
+
+function updateReadyTimer(){
+    let min = Math.floor(timeToReady/60);
+    let seconds = timeToReady % 60;
+    document.getElementById("status-label").innerHTML = `This will turn green when the webpage is ready to be used. <br> Time remaining: ${min} min, ${seconds} seconds`;
+}
+
+async function markOpen(){
+    clearInterval(intervalId);
+    clearInterval(readyIntervalId);
+
+    document.getElementById("status-label").textContent = "Ready :)";
+    let statusCircle = document.getElementById("status-circle");
+    // statusCircle.style.height = "75px";
+    // statusCircle.style.width = "75px";
+    statusCircle.style.bottom = "50%";
+    statusCircle.style.backgroundColor = "lightgreen";
+
+    
+    enableMainButtons();
+}
+
+let readyIntervalId;
+function startCheckIfReady(){
+    checkIfReady();
+    readyIntervalId = setInterval(() => {
+        checkIfReady();
+    }, 2000);
+}
+
+function checkIfReady(){
+    if(askBackendIfReady()){
+        markOpen();
+    }
+}
+
+async function askBackendIfReady(){
+
+    try {
+        const response = await fetch(`${apiBaseUrl}/is-ready`, {
+            method: "GET",
+        });
+
+        const result = await response.text(); // Extract result
+        console.log(result);
+        if(result.includes("ady")){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        throw error; // Re-throw the error if needed
+    }
+
+}
+
+function disableMainButtons(){
+    // Disable main buttons
+    let timerButtons = document.querySelectorAll('.main');
+    timerButtons.forEach(button => {
+        button.disabled = true;
+    });
+}
+
+function enableMainButtons(){
+    // Enable main buttons
+    let timerButtons = document.querySelectorAll('.main');
+    timerButtons.forEach(button => {
+        button.disabled = false;
+    });
+}
+
 //maybe add a button that will switch these to another very similar clone page
 //where cell size is not a constant and we can allow more than 8 as max size to see if can get big words
 
@@ -452,6 +599,13 @@ function initialize(){
             handleMultipleChars(event);
         }
     });
+
+    setupHoverInfo();
+    setInstructionInfo();
+    startReadyTimer();
+    startCheckIfReady();
+
+    disableMainButtons();
 }
 
-initialize();
+window.onload = initialize;

@@ -34,6 +34,17 @@ public class BoggleController {
     }
 
 
+    @GetMapping("/")
+    public String home() {
+        return "Boggle is running!";
+    }
+
+    @GetMapping("/is-ready")
+    public String getReady() {
+        return "ready";
+    }
+
+
     @PostMapping("/solve-boggle-all-at-once")
     public String solveBoggleAllAtOnce(@RequestBody InputRequest request) {
         String input = request.getInput();
