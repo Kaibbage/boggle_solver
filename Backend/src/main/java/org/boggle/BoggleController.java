@@ -44,15 +44,14 @@ public class BoggleController {
 
     @RequestMapping(path = "/is-ready", method = {RequestMethod.GET, RequestMethod.HEAD})
     public String getReady() {
-        return "finito";
+        if(boggleSolver.isReady()){
+            return "yesReady";
+        }
+        else{
+            return "noReady";
+        }
     }
 
-    @PostMapping("/setup-data-structures")
-    public String setupGame() {
-        boggleSolver.setUpWordsAndPrefixTree();
-
-        return "yay";
-    }
 
 
     @PostMapping("/solve-boggle-all-at-once")

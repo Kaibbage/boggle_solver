@@ -13,15 +13,19 @@ import static org.boggle.Constants.MIN_WORD_SIZE;
 import static org.boggle.Constants.directions;
 
 public class BoggleSolver {
-    public TrieNode head;
+    private TrieNode head;
+    private boolean ready;
 
     public BoggleSolver(){
+        ready = false;
         head = new TrieNode();
-    }
-
-    public void setUpWordsAndPrefixTree(){
         List<String> allWords = loadWords("textfiles/words_lowercase.txt");
         buildTrie(allWords);
+        ready = true;
+    }
+
+    public boolean isReady() {
+        return ready;
     }
 
     public List<String> loadWords(String filename) {

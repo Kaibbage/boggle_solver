@@ -1,4 +1,4 @@
-// const apiBaseUrl = "http://localhost:8080";
+//const apiBaseUrl = "http://localhost:8080";
 const apiBaseUrl = "https://boggle-solver-1nwj.onrender.com"
 let gridSize = 5;
 let wordToPathMap = new Map();
@@ -84,7 +84,6 @@ function updateReadyTimer(){
 }
 
 async function markOpen(){
-    await setupBackendDataStructures();
     clearInterval(intervalId);
     clearInterval(readyIntervalId);
 
@@ -123,7 +122,7 @@ async function askBackendIfReady(){
 
         const result = await response.text(); // Extract result
         console.log(result);
-        if(result.includes("finito")){
+        if(result.includes("yesReady")){
             return true;
         }
         else{
@@ -137,23 +136,6 @@ async function askBackendIfReady(){
 
 }
 
-async function setupBackendDataStructures() {
-
-    try {
-        const response = await fetch(`${apiBaseUrl}/setup-data-structures`, {
-            method: "POST",
-        });
-
-        const result = await response.text(); // Extract result
-        console.log(result);
-
-        return result; // Return the result
-
-    } catch (error) {
-        console.error("Error:", error);
-        throw error; // Re-throw the error if needed
-    }
-}
 
 function disableMainButtons(){
     // Disable main buttons
